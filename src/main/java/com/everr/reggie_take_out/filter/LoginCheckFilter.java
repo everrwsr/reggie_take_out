@@ -1,6 +1,7 @@
 package com.everr.reggie_take_out.filter;
 
 import com.alibaba.fastjson.JSON;
+import com.everr.reggie_take_out.common.BaseContext;
 import com.everr.reggie_take_out.common.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
@@ -44,6 +45,11 @@ public class LoginCheckFilter implements Filter {
         //4判断登录状态 ，如果登录，放行
         if (request.getSession().getAttribute("employee") != null) {
             log.info("用户已登录,用户id为：{}", request.getSession().getAttribute("employee"));
+
+            Long empId = (Long) request.getSession().getAttribute("employee");
+            BaseContext.setCurrentId(empId);
+            long id =Thread.currentThread().getId();
+            log.info("线程id为：{}",id);
             filterChain.doFilter(request, response);
             return;
         }
