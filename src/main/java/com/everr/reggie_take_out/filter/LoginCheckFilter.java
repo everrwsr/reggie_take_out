@@ -33,7 +33,7 @@ public class LoginCheckFilter implements Filter {
 //1. 读取URL，设置不需要处理的路径
         String requestURI = request.getRequestURI();
         log.info("拦截到请求： {}", requestURI);
-        String[] urls = new String[]{"/employee/login", "/employee/logout", "/backend/**", "/front/**"};
+        String[] urls = new String[]{"/employee/login", "/employee/logout", "/backend/**", "/front/**","/common/**"};
 //2. 判断此次请求是否需要处理
         boolean check = check(urls, requestURI);
 //3. 如果不需要处理，直接放行
