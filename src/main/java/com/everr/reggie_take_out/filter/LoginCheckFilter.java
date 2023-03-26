@@ -33,7 +33,7 @@ public class LoginCheckFilter implements Filter {
 //1. 读取URL，设置不需要处理的路径
         String requestURI = request.getRequestURI();
         log.info("拦截到请求： {}", requestURI);
-        String[] urls = new String[]{"/employee/login", "/employee/logout", "/backend/**", "/front/**","/common/**"};
+        String[] urls = new String[]{"/employee/login", "/employee/logout", "/backend/**", "/front/**", "/common/**", "/user/sendMsg", "/user/login"};
 //2. 判断此次请求是否需要处理
         boolean check = check(urls, requestURI);
 //3. 如果不需要处理，直接放行
@@ -42,19 +42,32 @@ public class LoginCheckFilter implements Filter {
             filterChain.doFilter(request, response);
             return;
         }
-        //4判断登录状态 ，如果登录，放行
+        //4-1判断登录状态 ，如果登录，放行
         if (request.getSession().getAttribute("employee") != null) {
             log.info("用户已登录,用户id为：{}", request.getSession().getAttribute("employee"));
 
             Long empId = (Long) request.getSession().getAttribute("employee");
             BaseContext.setCurrentId(empId);
-            long id =Thread.currentThread().getId();
-            log.info("线程id为：{}",id);
+            long id = Thread.currentThread().getId();
+            log.info("线程id为：{}", id);
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
+        //4-2判断登录状态 ，如果登录，放行
+        if (request.getSession().getAttribute("user") != null) {
+            log.info("用户已登录,用户id为：{}", request.getSession().getAttribute("user"));
+
+            Long userId = (Long) request.getSession().getAttribute("user");
+            BaseContext.setCurrentId(userId);
+            long id = Thread.currentThread().getId();
+            log.info("线程id为：{}", id);
             filterChain.doFilter(request, response);
             return;
         }
         ;
-            //如过未登录，通过输出流的方式
+        //如过未登录，通过输出流的方式
         log.info("用戶未登錄");
         response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));
 
